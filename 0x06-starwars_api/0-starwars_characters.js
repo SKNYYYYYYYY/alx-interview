@@ -2,26 +2,38 @@
 
 const request = require('request');
 
-function requestCharacter (urlChar) {
+const movieId = process.argv[2];
+
+if (!movieId) {
+  console.error('Usage: ./get_characters.js <movie_id>');
+  process.exit(1);
+}
+
+const filmUrl = `https://swapi-api.alx-tools.com/api/films/${movieId}/`;
+
+function fetchCharacter (url) {
   return new Promise((resolve, reject) => {
-    request({ url: urlChar, json: true }, (error, response, body) => {
-      if (error) reject(error);
-      resolve(body);
+    request({ url, json: true }, (err, res, body) => {
+      if (err) return reject(err);
+      resolve(body.name);
     });
   });
 }
 
-const movieId = process.argv[2];
-const url = 'https://swapi-api.alx-tools.com/api/films/' + movieId;
+request({ url: filmUrl, json: true }, async (err, res, body) => {
+  if (err) {
+    console.error(err);
+    return;
+  }
 
-request({ url, json: true }, async (error, response, body) => {
-  if (error) console.log(error);
-  const film = body;
-  const characters = film.characters;
-  for (const urlChar of characters) {
+  const characters = body.characters;
+
+  for (const url of characters) {
     try {
-      const charName = await requestCharacter(urlChar);
-      console.log(charName.name);
-    } catch (error) { console.log('Error fetching : ', error); }
+      const name = await fetchCharacter(url);
+      console.log(name);
+    } catch (err) {
+      console.error('Failed to fetch character:', err);
+    }
   }
 });
