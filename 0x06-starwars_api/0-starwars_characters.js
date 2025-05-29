@@ -19,7 +19,9 @@ request({ url, json: true }, async (error, response, body) => {
   const film = body;
   const characters = film.characters;
   for (const urlChar of characters) {
-    const charName = await requestCharacter(urlChar);
-    console.log(charName.name);
+    try {
+      const charName = await requestCharacter(urlChar);
+      console.log(charName.name);
+    } catch (error) { console.log('Error fetching : ', error); }
   }
 });
