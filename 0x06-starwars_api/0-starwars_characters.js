@@ -25,4 +25,3 @@
 //     } catch (error) { console.log('Error fetching : ', error); }
 //   }
 // });
-			console.log(dsfd)
